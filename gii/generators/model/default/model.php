@@ -86,4 +86,35 @@ public function get<?= $parts[sizeof($parts)-1] ?>() {
     {
         return new \<?= $ns.'\\'.$mainQueryClassName ?>(get_called_class());
     }
+    <?php
+        $restColumns = [];
+        foreach ($tableSchema->columns as $column) {
+            $restColumns[] = sprintf("'%s' => %s::%s", $column->name, $peerClassName, strtoupper($column->name));
+        }
+    ?>
+
+   /**
+    * @inheritdoc
+    * @return array of columns available for rest query
+    */
+    public function getRestColumns(){
+        return [<?= "\n            " . implode(",\n            ", $restColumns) . ",\n        " ?>];
+    }
+    <?php
+        $restRelations = [];
+        foreach ($relations as $name => $relation) {
+            $restRelations[] = sprintf("'%s' => '%s'", lcfirst($name), lcfirst($name));
+        }
+    ?>
+
+  /**
+    * @inheritdoc
+    * @return array of relations available for rest query
+    */
+    public function getRestRelations(){
+        /*
+        return [<?= "\n            " . implode(",\n            ", $restRelations) . ",\n        " ?>];
+        */
+    }
+
 }
